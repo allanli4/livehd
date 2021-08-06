@@ -679,7 +679,8 @@ void Lgtuple::add(std::string_view key, const std::shared_ptr<Lgtuple const>& tu
   bool tup_scalar = tup->is_scalar();
 
   for (const auto &e : tup->key_map) {
-    std::string_view key2;
+    std::string key2;
+
     // Remove 0. from tup if tup is scalar
     if (tup_scalar && e.first[0] == '0' && (e.first.size() == 1 || e.first[1] == '.')) {
       if (e.first.size() == 1)
