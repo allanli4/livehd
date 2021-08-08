@@ -926,7 +926,7 @@ Node_pin Lgtuple::flatten() const {
   Node_pin a_dpin;
   bool     all_const = true;
 
-  std::sort(key_map.begin(), key_map.end(), tuple_sort);  // mutable (no semantic check. Just faster to process)
+  std::stable_sort(key_map.begin(), key_map.end(), tuple_sort);  // mutable (no semantic check. Just faster to process)
 
   for (auto &e : key_map) {
     if (is_attribute(e.first))
@@ -1033,7 +1033,7 @@ bool Lgtuple::add_pending(Node &node, std::vector<std::pair<std::string_view, No
 std::shared_ptr<Lgtuple> Lgtuple::create_assign(const Node_pin &rhs_dpin) const {
   I(is_correct());
 
-  std::sort(key_map.begin(), key_map.end(), tuple_sort);
+  std::stable_sort(key_map.begin(), key_map.end(), tuple_sort);
 
   auto tup = std::make_shared<Lgtuple>(get_name());
 
@@ -1152,13 +1152,13 @@ std::shared_ptr<Lgtuple> Lgtuple::create_assign(const Node_pin &rhs_dpin) const 
     }
   }
 
-  std::sort(tup->key_map.begin(), tup->key_map.end(), tuple_sort);
+  std::stable_sort(tup->key_map.begin(), tup->key_map.end(), tuple_sort);
 
   return tup;
 }
 
 const Lgtuple::Key_map_type &Lgtuple::get_sort_map() const {
-  std::sort(key_map.begin(), key_map.end(), tuple_sort);  // mutable (no semantic check. Just faster to process)
+  std::stable_sort(key_map.begin(), key_map.end(), tuple_sort);  // mutable (no semantic check. Just faster to process)
   return key_map;
 }
 
@@ -1463,7 +1463,7 @@ std::shared_ptr<Lgtuple> Lgtuple::make_flop(Node &flop) const {
 
   std::shared_ptr<Lgtuple> ret_tup;
 
-  std::sort(key_map.begin(), key_map.end(), tuple_sort);  // mutable (no semantic check. Just faster to process)
+  std::stable_sort(key_map.begin(), key_map.end(), tuple_sort);  // mutable (no semantic check. Just faster to process)
 
   auto *lg = flop.get_class_lgraph();
 
@@ -1546,7 +1546,7 @@ std::shared_ptr<Lgtuple> Lgtuple::make_flop(Node &flop) const {
 
   I(ret_tup->is_correct());
 
-  std::sort(multi_flop_attrs.begin(), multi_flop_attrs.end(), tuple_sort);  // mutable (no semantic check. Just faster to process)
+  std::stable_sort(multi_flop_attrs.begin(), multi_flop_attrs.end(), tuple_sort);  // mutable (no semantic check. Just faster to process)
 
   for (auto &it : multi_flop_attrs) {
     auto root = get_all_but_last_level(it.first);
