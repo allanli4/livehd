@@ -183,11 +183,67 @@ public:
     assert(false);
   }
 
-  static void multn(int64_t *dest, size_t dest_sz, const int64_t *src1, const int64_t src2) {
-    (void)dest;
-    (void)dest_sz;
-    (void)src1;
-    (void)src2;
-    assert(false);
-  }
+  static void multn(int64_t *dest, size_t dest_sz, const int64_t *src1, const int64_t src2)
+{
+   dest[0] = 0;
+   int64_t *temp_src1 = const_cast<int64_t *>(src1);
+   int64_t temp_src2 = src2;
+   assert(dest_sz >= 1 && sizeof(src1) > 1);
+   bool s1Negative, s2Negative = false;
+   if (src2 < 0)
+   {
+      s2Negative = true;
+      temp_src2 = ~(src2 - 1);
+   }
+   if (src1[dest_sz - 2] < 0)
+   {
+      s1Negative = true;
+      temp_src1[0] = ~(src1[0] - 1);
+      for (int i = 1; i < dest_sz - 1; i++)
+      {
+         temp_src1[i] = ~src1[i];
+      }
+   }
+   // split src2
+   int index = 0;
+   int64_t exponent = 63;
+   while (temp_src2 > 0)
+   {
+      uint64_t exp = std::pow(2, exponent);
+      if (temp_src2 >= exp)
+      {
+         int64_t temp[dest_sz];
+         temp_src2 -= exp;
+         //shift left base on exponent
+         shln(temp, dest_sz, temp_src1, exponent);
+         //-------------add shifted bits to lastindex of temp-----------
+         temp[dest_sz - 1] = 0;
+         uint64_t src1_msb = temp_src1[dest_sz - 2];
+         for (auto i = 0; i < 64; i++)
+         {
+            if (src1_msb != 0)
+            {
+               uint temp_bit = src1_msb % 2;
+               src1_msb = src1_msb / 2;
+               if (i >= exponent - 1)
+               {
+                  temp[dest_sz - 1] += temp_bit * (std::pow(2, i));
+               }
+            }
+         }
+         addn(dest, dest_sz, temp, dest);
+      }
+      exponent--;
+   }
+   // check sign
+   if (s1Negative + s2Negative == 1)
+   {
+      // positive to two's complement negative
+      dest[0] = ~dest[0] + 1;
+      for (auto i = 1; i < dest_sz; i++)
+      {
+         dest[i] = ~dest[i];
+      }
+   }
+}
 };
