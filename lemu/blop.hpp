@@ -225,7 +225,7 @@ public:
             {
                uint temp_bit = src1_msb % 2;
                src1_msb = src1_msb / 2;
-               if (i >= exponent - 1)
+               if (i >= (64 - exponent))
                {
                   temp[dest_sz - 1] += temp_bit * (std::pow(2, i));
                }
