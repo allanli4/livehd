@@ -212,7 +212,6 @@ public:
     // check sign
     if (temp_src2 != 0) {
       if (s1Negative + s2Negative == 1) {
-        cout << "???" << endl;
         // positive to two's complement negative
         dest[0] = ~dest[0] + 1;
         for (auto i = 1; i < dest_sz; i++) {
