@@ -158,7 +158,7 @@ public:
   static void mult8(int8_t &dest, const int8_t src1, const int8_t src2) { dest = src1 * src2; }
   static void mult64(int64_t &dest, const int64_t src1, const int64_t src2) { dest = src1 * src2; }
 
-  static void multn(int64_t *dest, size_t dest_sz, const int64_t *src1, const int64_t *src2) {
+  static void multn(int64_t *dest, size_t dest_sz, const int64_t *src1, size_t src1_sz, const int64_t *src2, size_t src2_sz) {
     for (int i = 0; i < dest_sz; i++) {
       dest[i] = 0;
     }
@@ -196,18 +196,22 @@ public:
         uint64_t exp = std::pow(2, exponent);
         if (temp_src2 >= exp) {
           int64_t temp[dest_sz];
+          for (int k = 0; k < dest_sz; k++) {
+            temp[k] = 0;
+          }
           temp_src2 -= exp;
           // shift left base on exponent
           shln(temp, dest_sz, temp_src1, exponent);
           //-------------add shifted bits to lastindex of temp-----------
-          temp[dest_sz - 1] = 0;
-          uint64_t src1_msb = temp_src1[dest_sz - 2];
+          uint64_t src1_msb = temp_src1[src1_sz - 1];
           for (auto i = 0; i < 64; i++) {
             if (src1_msb != 0) {
               uint temp_bit = src1_msb % 2;
               src1_msb      = src1_msb / 2;
               if (i >= (64 - exponent)) {
-                temp[dest_sz - 1] += temp_bit * (std::pow(2, i + j));
+                // -----------------------------------------------not finished-----------------------------------------------
+                temp[src1_sz + j + 1] += temp_bit * (std::pow(2, i));
+                // -----------------------------------------------not finished-----------------------------------------------
               }
             } else {
               break;
